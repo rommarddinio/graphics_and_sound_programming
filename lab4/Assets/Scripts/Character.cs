@@ -202,4 +202,6 @@ public class Character : MonoBehaviour
         forwardSpeed = 10f; 
         animator.SetTrigger("started");
     }
+
+
 }

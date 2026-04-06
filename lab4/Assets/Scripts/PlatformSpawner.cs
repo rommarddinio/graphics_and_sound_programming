@@ -1,9 +1,20 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum LevelTheme
+{
+    City,
+    Railway
+}
+
 public class PlatformSpawner : MonoBehaviour
 {
-    public GameObject[] platformPrefabs;
+    [Header("Платформы")]
+    public GameObject[] cityPlatforms;
+    public GameObject[] railwayPlatforms;
+
+    private GameObject[] currentPlatforms;
+
     public Transform player;
 
     public int initialPlatforms = 5;
@@ -13,6 +24,18 @@ public class PlatformSpawner : MonoBehaviour
 
     void Start()
     {
+        if (LevelManager.Instance != null)
+        {
+            if (LevelManager.Instance.selectedTheme == LevelTheme.City)
+                currentPlatforms = cityPlatforms;
+            else
+                currentPlatforms = railwayPlatforms;
+        }
+        else
+        {
+            currentPlatforms = cityPlatforms;
+        }
+
         for (int i = 0; i < initialPlatforms; i++)
         {
             SpawnPlatform();
@@ -21,7 +44,10 @@ public class PlatformSpawner : MonoBehaviour
 
     void Update()
     {
-        if (player.position.z + 2 * GetLastPlatformLength() > spawnZ)
+        Transform currentPlayer = PlayerManager.Instance.GetPlayerTransform();
+        if (currentPlayer == null) return;
+
+        if (currentPlayer.position.z + 2 * GetLastPlatformLength() > spawnZ)
         {
             SpawnPlatform();
             DeleteOldPlatform();
@@ -30,7 +56,7 @@ public class PlatformSpawner : MonoBehaviour
 
     void SpawnPlatform()
     {
-        GameObject prefab = platformPrefabs[Random.Range(0, platformPrefabs.Length)];
+        GameObject prefab = currentPlatforms[Random.Range(0, currentPlatforms.Length)];
         GameObject go = Instantiate(prefab);
 
         float length = GetPlatformLength(go);

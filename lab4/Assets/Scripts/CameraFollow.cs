@@ -10,16 +10,18 @@ public class CameraFollow : MonoBehaviour
 
     void Start()
     {
+        target  = PlayerManager.Instance.GetPlayerTransform();
         initialRotation = transform.rotation;
     }
 
     void LateUpdate()
     {
-        Vector3 desiredPosition = target.position + offset;
+        Transform target = PlayerManager.Instance.GetPlayerTransform();
+        if (target == null) return;
 
+        Vector3 desiredPosition = target.position + offset;
         Vector3 smoothedPosition = Vector3.Lerp(transform.position, desiredPosition, smoothSpeed * Time.deltaTime);
         transform.position = smoothedPosition;
-
         transform.rotation = initialRotation;
     }
 
